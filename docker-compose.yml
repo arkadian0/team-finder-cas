@@ -1,0 +1,38 @@
+version: '3'
+services:
+  game-db:
+    image: postgres
+    container_name: game-db
+    ports:
+      - "5433:5432"
+    expose:
+      # Opens port 5432 on the container
+      - '5433'
+      # Where our data will be persisted
+    environment:
+      - POSTGRES_USER=game
+      - POSTGRES_PASSWORD=game
+      - POSTGRES_DB=GAME
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data_game
+      - ./init_game_db.sql:/docker-entrypoint-initdb.d/init_game_db.sql
+    restart: always
+  game-cas-db:
+    image: postgres
+    container_name: game-cas
+    ports:
+      - "5434:5432"
+    expose:
+      # Opens port 5432 on the container
+      - '5434'
+      # Where our data will be persisted
+    environment:
+      - POSTGRES_USER=game_cas
+      - POSTGRES_PASSWORD=game_cas
+      - POSTGRES_DB=GAME_CAS
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data_cas
+      - ./init_game_cas_db.sql:/docker-entrypoint-initdb.d/init_game_cas_db.sql
+    restart: always
+
+
