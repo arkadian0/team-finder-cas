@@ -50,7 +50,7 @@ public class Account implements Serializable {
         this.isEnabled = true;
     }
 
-    static UserDetails of(Account account) {
+    static UserDetails createUserDetails(Account account) {
         return org.springframework.security.core.userdetails.User
                 .withUsername(account.getEmail())
                 .password(account.getPassword())

@@ -26,22 +26,13 @@ class UserAuthorizationService implements UserDetailsService, UserAuthorizationP
     private final RoleRepositoryPort roleRepositoryPort;
     private final EmailSenderPort emailSenderPort;
     private final ConfirmationTokenRepositoryPort confirmationTokenRepositoryPort;
-    private final AccountValidator accountValidator;
 
     @Override
-    public TfResponseValidationList register(RegistrationCommand registrationCommand) {
+    public void register(RegistrationCommand registrationCommand) {
         Optional<Account> account = userRepositoryPort.findByEmail(registrationCommand.getEmail());
-        TfResponseValidationList tfResponseValidationList = accountValidator.validateAccount(account, registrationCommand);
-
-        if (!tfResponseValidationList.getErrors().isEmpty())
-            return tfResponseValidationList;
-
-
         Account newUser = new Account(registrationCommand, roleRepositoryPort.findByRole(SystemRole.USER).get());
         userRepositoryPort.save(newUser);
         emailSenderPort.sendEmailWithConfirmationToken(newUser.getConfirmationToken());
-
-        return tfResponseValidationList;
     }
 
     @Override
@@ -64,6 +55,6 @@ class UserAuthorizationService implements UserDetailsService, UserAuthorizationP
         if (!user.isPresent()) {
             throw new UsernameNotFoundException(String.format("User not found by name: %s", email));
         }
-        return Account.of(user.get());
+        return Account.createUserDetails(user.get());
     }
 }

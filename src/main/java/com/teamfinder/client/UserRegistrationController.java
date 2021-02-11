@@ -16,9 +16,11 @@ public class UserRegistrationController {
     private final UserAuthorizationPort userAuthorizationCommandPort;
 
     @PostMapping
-    public ResponseEntity<TfResponseValidationList> registerNotConfirmedUser(@RequestBody RegistrationCommand registrationCommand) {
-        TfResponseValidationList tfResponseValidationList = userAuthorizationCommandPort.register(registrationCommand);
-        return TfResponseValidationList.getPostResponse(tfResponseValidationList);
+    public ResponseEntity<String> registerNotConfirmedUser(@RequestBody RegistrationCommand registrationCommand) {
+        userAuthorizationCommandPort.register(registrationCommand);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("User confirmed");
     }
 
     @GetMapping(value = "/confirm-account")
